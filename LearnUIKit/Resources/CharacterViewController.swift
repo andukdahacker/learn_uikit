@@ -7,12 +7,18 @@
 
 import UIKit
 
-class CharacterViewController: UIViewController {
+class CharacterViewController: UIViewController, CharacterListViewDelegate {
     
     private let characterListView = CharacterListView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setUpView()
+    }
+    
+    
+    private func setUpView() {
+        characterListView.delegate = self
         view.backgroundColor = .systemBackground
         title = "Characters"
         
@@ -24,6 +30,13 @@ class CharacterViewController: UIViewController {
             characterListView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             characterListView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor)
         ])
+    }
+    
+    func characterListView(_ characterListView: CharacterListView, didSelectCharacter character: Character) {
+        let viewModel = CharacterDetailViewViewModel(character: character)
+        let detailVC = CharacterDetailViewController(viewModel: viewModel)
+        
+        navigationController?.pushViewController(detailVC, animated: true)
     }
     
 }

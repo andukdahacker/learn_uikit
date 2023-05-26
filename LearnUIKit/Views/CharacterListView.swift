@@ -7,7 +7,13 @@
 
 import UIKit
 
+protocol CharacterListViewDelegate: AnyObject {
+    func characterListView(_ characterListView: CharacterListView, didSelectCharacter character: Character)
+}
+
 final class CharacterListView: UIView {
+    weak var delegate: CharacterListViewDelegate?
+    
     private let viewModel = CharacterListViewViewModel()
     
     private let spinner: UIActivityIndicatorView = {
@@ -20,11 +26,12 @@ final class CharacterListView: UIView {
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.isHidden = true
         collectionView.alpha = 0
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.register(CharacterCollectionViewCell.self, forCellWithReuseIdentifier: CharacterCollectionViewCell.id)
         return collectionView
     }()
     
@@ -36,6 +43,7 @@ final class CharacterListView: UIView {
         addConstraints()
         
         spinner.startAnimating()
+        viewModel.delegate = self
         viewModel.fetch()
         
         setUpCollectionView()
@@ -61,5 +69,22 @@ final class CharacterListView: UIView {
     
     private func setUpCollectionView() {
         collectionView.dataSource = viewModel
+        collectionView.delegate = viewModel
+    }
+}
+
+extension CharacterListView: CharacterListViewViewModelDelegate {
+    func didSelectCharacter(_ character: Character) {
+        delegate?.characterListView(self, didSelectCharacter: character)
+    }
+    
+    func didLoadInitialCharacters() {
+        spinner.stopAnimating()
+        collectionView.isHidden = false
+        collectionView.reloadData()
+        
+        UIView.animate(withDuration: 0.4) {
+            self.collectionView.alpha = 1
+        }
     }
 }

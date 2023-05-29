@@ -8,8 +8,10 @@
 import UIKit
 
 final class CharacterDetailViewController: UIViewController {
-
+    private var viewModel: CharacterDetailViewViewModel
+    
     init(viewModel: CharacterDetailViewViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -20,6 +22,6 @@ final class CharacterDetailViewController: UIViewController {
         super.viewDidLoad()
 
         view.backgroundColor = .systemBackground
-        
+        title = viewModel.title
     }
 }

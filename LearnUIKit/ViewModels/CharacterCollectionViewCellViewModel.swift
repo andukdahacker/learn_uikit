@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class CharacterCollectionViewCellViewModel {
+final class CharacterCollectionViewCellViewModel: Hashable, Equatable {
     
     public let characterName: String
     private let characterStatus: CharacterStatus
@@ -46,4 +46,14 @@ final class CharacterCollectionViewCellViewModel {
         
         task.resume()
     }
+    
+    static func == (lhs: CharacterCollectionViewCellViewModel, rhs: CharacterCollectionViewCellViewModel) -> Bool {
+          return lhs.hashValue == rhs.hashValue
+      }
+
+      func hash(into hasher: inout Hasher) {
+          hasher.combine(characterName)
+          hasher.combine(characterStatus)
+          hasher.combine(characterImageUrl)
+      }
 }
